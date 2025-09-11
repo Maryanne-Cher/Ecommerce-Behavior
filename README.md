@@ -3,7 +3,6 @@
 This project uses the [Ecommerce Behavior Data from Multi-category Store](https://www.kaggle.com/datasets/mkechinov/ecommerce-behavior-data-from-multi-category-store) dataset hosted on Kaggle.  
 
 ⚠️ Note: The full dataset is too large to be stored directly in this repository.  
-A small sample (`sample_data.csv`, first 1,000 rows) is included for quick testing.  
 
 ### How to Download the Full Dataset
 1. Go to the [dataset page on Kaggle](https://www.kaggle.com/datasets/mkechinov/ecommerce-behavior-data-from-multi-category-store).  
