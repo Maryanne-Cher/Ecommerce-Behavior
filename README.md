@@ -15,3 +15,7 @@ For example:
 ```python
 csv_file = r"C:\Users\<your-username>\Downloads\2019-Oct.csv"
 
+## Load Data into SQL Server
+
+To export the dataset into SQL Server, use the provided script: [`scripts/load_to_sql.py`](scripts/load_to_sql.py).  
+
