@@ -1,7 +1,10 @@
-/*
-===================
+/* 
 Create Database and Schemas
-=====================
+==================================================
+Script Purpose: This script will create a new database named 'ecommerce_behavior_warehouse' after checking if it already exists.
+If the database exists, it is dropped and recreated. Additionally, the script sets up three schemas within the database:
+'bronze', 'silver', and 'gold'. 
+===================================================
 */
 
 USE Master;
