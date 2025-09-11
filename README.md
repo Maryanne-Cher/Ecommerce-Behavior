@@ -1,1 +1,17 @@
-# Ecommerce-Behavior
+## Ecommerce_Behavior
+
+This project uses the [Ecommerce Behavior Data from Multi-category Store](https://www.kaggle.com/datasets/mkechinov/ecommerce-behavior-data-from-multi-category-store) dataset hosted on Kaggle.  
+
+⚠️ Note: The full dataset is too large to be stored directly in this repository.  
+A small sample (`sample_data.csv`, first 1,000 rows) is included for quick testing.  
+
+### How to Download the Full Dataset
+1. Go to the [dataset page on Kaggle](https://www.kaggle.com/datasets/mkechinov/ecommerce-behavior-data-from-multi-category-store).  
+2. Sign in with your Kaggle account.  
+3. Download the CSV file(s) to your local machine.  
+4. Update the `csv_file` path in [`scripts/load_to_sql.py`](scripts/load_to_sql.py) with the location of your downloaded file.  
+
+For example:  
+```python
+csv_file = r"C:\Users\<your-username>\Downloads\2019-Oct.csv"
+
