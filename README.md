@@ -3,7 +3,7 @@
 This project uses the [Ecommerce Behavior Data from Multi-category Store](https://www.kaggle.com/datasets/mkechinov/ecommerce-behavior-data-from-multi-category-store) dataset hosted on Kaggle.  
 ### Example of a User's Journey:
 1. The user checked out several iPhones
-2. Purchased one iPhone in 1 click (Without cart event)
+2. Purchased one iPhone in 1 click
 3. Viewed 2 unknown products at brand Arena
 4. Visited some Apple's headphones and purchased one
 5. After that visited more expensive products but decided not to buy it
