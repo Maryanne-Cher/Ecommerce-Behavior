@@ -20,9 +20,37 @@ This project uses the [Ecommerce Behavior Data from Multi-category Store](https:
 3. Remove from cart - a user removed a product from shopping cart
 4. Purchase - a user purchased a product
 
+## Business Questions:
+### User Behavior and Engagement
+1. How many unique users visit the site daily/weekly/monthly?
+2. What's the average number of sessions per user?
+3. How long do sessions last?
+4. How many products does a user tpically view before making a purchase?
+
+ ### Conversion Funnel Analysis
+ 1. What % of users move from view > cart > purchase?
+ 2. At which step do most users drop off (eg., cart abandonment)?
+ 3. Do conversion rates differ by product category, brand or price range?
+
+### Product & Category Insights
+1. Which categories drive the most revenue?
+2. Which brands/products are most viewed vs most purchased?
+3. Are there "popular but never purchased" products ( lots of views but zero purchases)?
+4. Does higher price reduce conversion likelihood?
+
+### Revenue and Profitability
+1. What is total revenue per day/week/month?
+2. WHich products/brands generate the most revenue?
+3. What is the average order value (AOV)?
+4. How much potential revenue is lost due to cart abandonment?
+
+### Time-Based Patterns
+1. When do users shop the most (hour of day, day of week)?
+2. Are purchases concentrated on weekends or weekdays?
+3. Does user engagement spike around certain times (holidays, promotions)
+
+
 ⚠️ Note: The full dataset is too large to be stored directly in this repository.  
-
-
 ### How to Download the Full Dataset
 1. Go to the [dataset page on Kaggle](https://www.kaggle.com/datasets/mkechinov/ecommerce-behavior-data-from-multi-category-store).  
 2. Sign in with your Kaggle account.  
