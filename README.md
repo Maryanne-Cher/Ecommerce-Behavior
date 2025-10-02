@@ -62,6 +62,6 @@ This project uses the [Ecommerce Behavior Data from Multi-category Store](https:
 ## Load Data into SQL Server using Python
 1. First step is to create the schemas [insert link]
 2. Second step is to create a DDL for bronze.ecommerce_nov [insert_link]. Remember to create columnstore index and a clustered index to expedite the execution time.
-3. Download the CSV file and use this Python script to load data from Jupyter using Pandas library to SQL Server. This python code was used to minimally transform the data by converting timestamps and splitting category code and also ensures missing values (NaN/NaT) are inserted as SQL nulls. To export the dataset into SQL Server, use the provided script: [insert_link]
+3. Download the CSV file and use this Python script to load data from Jupyter using Pandas library to SQL Server. This python code was used to minimally transform the data by splitting datetime to separate date and time columns, and splitting category_code into category & subcategory and also ensures missing values (NaN/NaT) are inserted as SQL nulls. To export the dataset into SQL Server, use the provided script: [insert_link]
 4. 
 
