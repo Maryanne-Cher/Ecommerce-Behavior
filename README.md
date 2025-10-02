@@ -60,6 +60,8 @@ This project uses the [Ecommerce Behavior Data from Multi-category Store](https:
 6. Update the `csv_file` path in [`scripts/load_to_sql.py`](scripts/load_to_sql.py) with the location of your downloaded file.
 
 ## Load Data into SQL Server using Python
-
-To export the dataset into SQL Server, use the provided script: [`scripts/load_to_sql.py`](scripts/load_to_sql.py).  
+1. First step is to create the schemas [insert link]
+2. Second step is to create a DDL for bronze.ecommerce_nov [insert_link]
+3. Download the CSV file and use this Python script to load data from Jupyter using Pandas library to SQL Server. This python code will also be used to run the rest of the months.
+    To export the dataset into SQL Server, use the provided script: [`scripts/load_to_sql.py`](scripts/load_to_sql.py).  
 
