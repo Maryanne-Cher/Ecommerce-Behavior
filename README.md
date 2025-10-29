@@ -19,7 +19,8 @@ This project uses the [Ecommerce Behavior Data from Multi-category Store](https:
 2. Cart - a user added a product to shopping cart
 3. Remove from cart - a user removed a product from shopping cart
 4. Purchase - a user purchased a product
-
+### Tools used for this project:
+Prefect, Jupyter,
 ## Business Questions:
 ### User Behavior and Engagement
 1. How many unique users visit the site daily/weekly/monthly?
