@@ -1,0 +1,10 @@
+
+---
+
+## Dependencies
+
+- Python 3.9+
+- pandas
+- sqlalchemy
+- pyodbc
+- prefect
