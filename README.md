@@ -1,6 +1,15 @@
 ## Ecommerce_Behavior
 
 This project uses the [Ecommerce Behavior Data from Multi-category Store](https://www.kaggle.com/datasets/mkechinov/ecommerce-behavior-data-from-multi-category-store) dataset hosted on Kaggle.  
+### How to Download the Full Dataset
+⚠️ Note: The full dataset is too large to be stored directly in this repository.  
+1. Go to the [dataset page on Kaggle](https://www.kaggle.com/datasets/mkechinov/ecommerce-behavior-data-from-multi-category-store).  
+2. Sign in with your Kaggle account.  
+3. Download the CSV file(s) to your local machine.
+4. Create database and schemas on SQL Server (add link) 
+5. Create bronze DDL script on SQL Server (add link)
+6. Update the `csv_file` path in [`scripts/load_to_sql.py`](scripts/load_to_sql.py) with the location of your downloaded file.
+7. 
 ### Example of a User's Journey:
 1. The user checked out several iPhones
 2. Purchased one iPhone in 1 click
@@ -19,51 +28,78 @@ This project uses the [Ecommerce Behavior Data from Multi-category Store](https:
 2. Cart - a user added a product to shopping cart
 3. Remove from cart - a user removed a product from shopping cart
 4. Purchase - a user purchased a product
-### Tools used for this project:
-Prefect, Jupyter,
-## Business Questions:
-### User Behavior and Engagement
-1. How many unique users visit the site daily/weekly/monthly?
-2. What's the average number of sessions per user?
-3. How long do sessions last?
-4. How many products does a user tpically view before making a purchase?
-
- ### Conversion Funnel Analysis
- 1. What % of users move from view > cart > purchase?
- 2. At which step do most users drop off (eg., cart abandonment)?
- 3. Do conversion rates differ by product category, brand or price range?
-
-### Product & Category Insights
-1. Which categories drive the most revenue?
-2. Which brands/products are most viewed vs most purchased?
-3. Are there "popular but never purchased" products ( lots of views but zero purchases)?
-4. Does higher price reduce conversion likelihood?
-
-### Revenue and Profitability
-1. What is total revenue per day/week/month?
-2. WHich products/brands generate the most revenue?
-3. What is the average order value (AOV)?
-4. How much potential revenue is lost due to cart abandonment?
-
-### Time-Based Patterns
-1. When do users shop the most (hour of day, day of week)?
-2. Are purchases concentrated on weekends or weekdays?
-3. Does user engagement spike around certain times (holidays, promotions)
 
 
-⚠️ Note: The full dataset is too large to be stored directly in this repository.  
-### How to Download the Full Dataset
-1. Go to the [dataset page on Kaggle](https://www.kaggle.com/datasets/mkechinov/ecommerce-behavior-data-from-multi-category-store).  
-2. Sign in with your Kaggle account.  
-3. Download the CSV file(s) to your local machine.
-4. Create database and schemas on SQL Server (add link) 
-5. Create bronze DDL script on SQL Server (add link)
-6. Update the `csv_file` path in [`scripts/load_to_sql.py`](scripts/load_to_sql.py) with the location of your downloaded file.
+# E-commerce Analytics ETL Project
 
-## Load Data into SQL Server using Python
-1. First step is to create the schemas [insert link]
-2. Since we have a large dataset, second step is to create a partition by date in order to expedite the load time [insert_link]
-3. Second step is to create a DDL for bronze.ecommerce_nov [insert_link]. Remember to include the partitioned table.
-4. Download the CSV file and use this Python script to load data from Jupyter using Pandas library to SQL Server. This python code was used to minimally transform the data by splitting datetime to separate date and time columns, and splitting category_code into category & subcategory and also ensures missing values (NaN/NaT) are inserted as SQL nulls. To export the dataset into SQL Server, use the provided script: [insert_link]
-5. Next step is to create columnstore index and a clustered index to expedite the execution time. 
+## Project Overview
+This project implements an end-to-end ETL pipeline for e-commerce behavioral data, transforming raw CSV files into analytics-ready tables across **Bronze**, **Silver**, and **Gold** layers. Data quality (DQ) checks are performed at each layer, and **Prefect** flows orchestrate ETL and DQ tasks.
+
+---
+
+## Architecture
+
+- **Bronze Layer**: Raw ingestion of CSV data with minimal transformation for testing.
+- **Silver Layer**: Cleaned and standardized data for analytics, with transformations like splitting category codes and replacing missing values.
+- **Gold Layer**: Analytics-ready fact and dimension tables for reporting, including deduplicated products and enriched events.
+
+---
+
+## Prefect Flows
+
+| Layer  | Flow Name                        | Description                            |
+|--------|---------------------------------|----------------------------------------|
+| Bronze | `bronze_flow()`                  | Load CSV into Bronze layer.             |
+| Bronze | `bronze_dq_flow()`               | Run data quality checks on Bronze.     |
+| Silver | `silver_flow()`                  | Load Silver table from Bronze.         |
+| Silver | `silver_dq_flow()`               | Run data quality checks on Silver.     |
+| Gold   | `gold_dim_products_flow()`       | Load Gold dimension table.             |
+| Gold   | `gold_fact_ecommerce_flow()`     | Load Gold fact table.                  |
+| Gold   | `gold_dq_flow()`                 | Run data quality checks on Gold.       |
+
+---
+
+## Key Features
+
+- **Data Quality Checks**:
+  - Null and distinct counts
+  - Duplicate detection
+  - UNKNOWN value detection
+  - Referential integrity and consistency checks
+- **Data Transformations**:
+  - Bronze: minimal cleaning and type conversions
+  - Silver: split category codes, fill missing values
+  - Gold: deduplicate products and enrich fact events
+
+---
+
+## Repository Structure
+ecommerce_etl/
+│
+├── bronze/
+│ ├── bronze_layer_load.py
+│ ├── bronze_dq.py
+│
+├── silver/
+│ ├── silver_layer_load.py
+│ ├── silver_dq.py
+│ └── stored_procedures/
+│ └── LoadEcommerceBehavior.sql
+│
+├── gold/
+│ ├── gold_dim_products_load.py
+│ ├── gold_fact_ecommerce_load.py
+│ ├── gold_data_quality.py
+│ └── stored_procedures/
+│ ├── LoadDimProducts.sql
+│ └── LoadFactEcommerce.sql
+│
+├── README.md
+└── requirements.txt
+
+
+
+
+
+
 
