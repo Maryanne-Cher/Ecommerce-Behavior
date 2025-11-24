@@ -141,6 +141,35 @@ ecommerce_etl/
 
 
 
+## ETL Pipeline Flow Diagram
+
+```mermaid
+flowchart TD
+    A[Raw CSV Files] -->|Load CSV| B(Bronze Layer)
+    B -->|Bronze ETL Flow<br>(bronze_flow)| C
+    B -->|Bronze DQ Flow<br>(bronze_dq_flow)| D
+
+    C -->|Load to Silver<br>Stored Procedure: LoadEcommerceBehavior| E(Silver Layer)
+    E -->|Silver ETL Flow<br>(silver_flow)| F
+    E -->|Silver DQ Flow<br>(silver_dq_flow)| G
+
+    F -->|Load Dim Table<br>Stored Procedure: LoadDimProducts| H(Gold Dim Products)
+    F -->|Load Fact Table<br>Stored Procedure: LoadFactEcommerce| I(Gold Fact Ecommerce)
+
+    H -->|Gold Dim DQ Flow| J
+    I -->|Gold Fact DQ Flow<br>(gold_dq_flow)| K
+
+    style A fill:#f9f,stroke:#333,stroke-width:2px
+    style B fill:#bbf,stroke:#333,stroke-width:2px
+    style C fill:#bbf,stroke:#333,stroke-width:2px
+    style D fill:#fbb,stroke:#333,stroke-width:2px
+    style E fill:#bbf,stroke:#333,stroke-width:2px
+    style F fill:#bbf,stroke:#333,stroke-width:2px
+    style G fill:#fbb,stroke:#333,stroke-width:2px
+    style H fill:#bfb,stroke:#333,stroke-width:2px
+    style I fill:#bfb,stroke:#333,stroke-width:2px
+    style J fill:#fbb,stroke:#333,stroke-width:2px
+    style K fill:#fbb,stroke:#333,stroke-width:2px
 
 
 
