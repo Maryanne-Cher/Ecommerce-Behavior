@@ -81,10 +81,6 @@ This project uses the [Ecommerce Behavior Data from Multi-category Store](https:
 | pyodbc       | SQL Server ODBC connection                 |
 | Kaggle       | Source of raw dataset                       |
 
-![SQL Server Logo](https://img.icons8.com/color/48/000000/sql-server.png)  
-![Python Logo](https://img.icons8.com/color/48/000000/python.png)  
-![Prefect Logo](https://images.ctfassets.net/0nm5vlv2ad7a/3trZQOSXl8NqgGCu4s2XrT/2a0b83f4a056da688d25bb89df1b8a78/prefect-logo.png)  
-![Pandas Logo](https://pandas.pydata.org/static/img/pandas_mark.svg)
 
 ---
 
@@ -116,30 +112,32 @@ This project uses the [Ecommerce Behavior Data from Multi-category Store](https:
 
 ---
 
+
 ## Repository Structure
+
+```text
 ecommerce_etl/
 │
 ├── bronze/
-│ ├── bronze_layer_load.py
-│ ├── bronze_dq.py
+│   ├── bronze_layer_load.py          # ETL script to load raw CSV into Bronze layer
+│   ├── bronze_dq.py                  # Data quality checks for Bronze layer
 │
 ├── silver/
-│ ├── silver_layer_load.py
-│ ├── silver_dq.py
-│ └── stored_procedures/
-│ └── LoadEcommerceBehavior.sql
+│   ├── silver_layer_load.py          # ETL script to transform and load Bronze data into Silver layer
+│   ├── silver_dq.py                  # Data quality checks for Silver layer
+│   └── stored_procedures/
+│       └── LoadEcommerceBehavior.sql # Stored procedure to populate Silver layer from Bronze
 │
 ├── gold/
-│ ├── gold_dim_products_load.py
-│ ├── gold_fact_ecommerce_load.py
-│ ├── gold_data_quality.py
-│ └── stored_procedures/
-│ ├── LoadDimProducts.sql
-│ └── LoadFactEcommerce.sql
+│   ├── gold_dim_products_load.py     # ETL script to load deduplicated products into Gold dimension table
+│   ├── gold_fact_ecommerce_load.py   # ETL script to load enriched events into Gold fact table
+│   ├── gold_data_quality.py          # Data quality checks for Gold layer
+│   └── stored_procedures/
+│       ├── LoadDimProducts.sql       # Stored procedure to populate Gold dimension table
+│       └── LoadFactEcommerce.sql     # Stored procedure to populate Gold fact table
 │
-├── README.md
-└── requirements.txt
-
+├── README.md                         # Project documentation
+└── requirements.txt                  # Python dependencies
 
 
 
