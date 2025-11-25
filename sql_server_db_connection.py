@@ -18,7 +18,7 @@ from sqlalchemy import create_engine, text
 # Database Configuration
 # =================================================
 DATABASE_CONFIG = {
-    "server": "ATX11492",
+    "server": "",
     "database": "ecommerce_behavior",
     "driver": "ODBC Driver 17 for SQL Server",
 }
