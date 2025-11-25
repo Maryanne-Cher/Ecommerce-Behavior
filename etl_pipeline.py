@@ -7,7 +7,7 @@
 # The pipeline is designed to load, clean, transform, and validate e-commerce behavior data.
 #
 # The master flow, `medallion_pipeline_flow`, executes the following stages sequentially:
-# 1. Bronze Load: Reads the CSV, cleans 10,000 rows, and appends them to `bronze.ecommerce_behavior`.
+# 1. Bronze Load: Reads ALL CSV files matching the pattern in the source directory and loads them.
 # 2. Bronze DQ: Performs data quality checks (nulls, invalid IDs) on the raw data.
 # 3. Silver Load: Executes a SQL Stored Procedure to transform Bronze data into the Silver layer.
 # 4. Silver DQ: Checks for nulls, unknowns, and consistency in the Silver layer.
@@ -15,11 +15,11 @@
 # 6. Gold DQ: Performs integrity checks (referential integrity, key duplicates) on the Gold layer.
 #
 # Prerequisites:
-# 1. Python environment with 'prefect', 'pandas', and 'SQLAlchemy' installed.
+# 1. Python environment with 'prefect', 'pandas', 'SQLAlchemy', and 'glob' installed.
 # 2. A running SQL Server instance accessible via ODBC Driver 17.
 # 3. The specified database ('ecommerce_behavior') must exist, along with the 'bronze',
 #    'silver', and 'gold' schemas, and required stored procedures (SPs) for Silver/Gold loading.
-# 4. The CSV_FILE path must be valid on the execution machine.
+# 4. The SOURCE_FILES_PATTERN must point to a valid directory containing the CSV files.
 #
 # Execution:
 # To run locally: python medallion_pipeline.py
@@ -30,6 +30,8 @@
 from prefect import task, flow
 import pandas as pd
 from sqlalchemy import create_engine, text
+from glob import glob # Required for finding multiple files
+from pathlib import Path # Useful for printing clean file names
 
 # =================================================
 # 1. Configuration and Database Setup
@@ -42,9 +44,9 @@ DATABASE_CONFIG = {
     "driver": "ODBC Driver 17 for SQL Server"
 }
 
-# Path to CSV for Bronze Layer loading
-# NOTE: Update this path to a valid location on your machine.
-CSV_FILE = r"C:\Users\mmbesu\Desktop\_SQL projects\ecommerce behavior data project\November data\2019-Oct.csv"
+# Path to CSVs for Bronze Layer loading - now a pattern to find multiple files
+# NOTE: Updated to include the 'csv_files' subdirectory based on user feedback.
+SOURCE_FILES_PATTERN = r"C:\Users\mmbesu\Desktop\_SQL projects\ecommerce behavior data project\November data\csv_files\*.csv"
 
 # Construct connection string and engine
 connection_string = (
@@ -58,39 +60,63 @@ engine = create_engine(connection_string)
 # 2. Bronze Layer Tasks (Load & DQ)
 # =================================================
 
-@task(name="Load CSV to Bronze (Test Mode)")
-def load_csv_to_bronze():
+@task(name="Load CSVs to Bronze")
+def load_csvs_to_bronze(file_pattern: str):
     """
-    Loads only the first 10,000 rows into the Bronze layer for testing.
+    Finds all CSV files matching the pattern, reads the first 10,000 rows 
+    of each file, and loads them into the Bronze layer.
     Cleans and transforms data:
       - event_time → datetime (remove timezone)
       - Replace NaN with None for SQL compatibility
     """
-    print(f"Loading data from: {CSV_FILE}")
+    # Use glob to find all matching files
+    csv_files = glob(file_pattern)
     
-    # Read only first 10,000 rows
-    try:
-        df = pd.read_csv(CSV_FILE, nrows=10_000)
-    except FileNotFoundError:
-        print(f"❌ ERROR: CSV file not found at {CSV_FILE}. Cannot load Bronze data.")
+    if not csv_files:
+        print(f"❌ ERROR: No CSV files found matching pattern: {file_pattern}")
         return False
         
-    # Convert 'event_time' to datetime (UTC-aware), then remove timezone info
-    df['event_time'] = pd.to_datetime(df['event_time'], utc=True).dt.tz_localize(None)
+    total_rows_loaded = 0
+    print(f"Found {len(csv_files)} files to process.")
+    
+    for file_path in csv_files:
+        file_name = Path(file_path).name
+        print(f"Loading data from file: {file_name}")
+        
+        try:
+            # Read only the first 10,000 rows using chunking to limit the data size per file
+            # pd.read_csv with chunksize returns an iterator. next() gets the first chunk (max 10,000 rows).
+            chunk_iterator = pd.read_csv(file_path, chunksize=10000)
+            df = next(chunk_iterator)
+            
+            # Convert 'event_time' to datetime (UTC-aware), then remove timezone info
+            df['event_time'] = pd.to_datetime(df['event_time'], utc=True).dt.tz_localize(None)
 
-    # Replace NaN values with None so SQL can handle them
-    df = df.where(pd.notnull(df), None)
+            # Replace NaN values with None so SQL can handle them
+            df = df.where(pd.notnull(df), None)
 
-    # Append data to Bronze schema
-    df.to_sql(
-        name="ecommerce_behavior",    # target table
-        schema="bronze",             # schema
-        con=engine,                  # database connection
-        if_exists="append",          # append instead of replace
-        index=False                  # do not write DataFrame index
-    )
+            # Append data to Bronze schema
+            df.to_sql(
+                name="ecommerce_behavior",    # target table
+                schema="bronze",             # schema
+                con=engine,                  # database connection
+                if_exists="append",          # append instead of replace
+                index=False                  # do not write DataFrame index
+            )
+            
+            rows_in_file = len(df)
+            total_rows_loaded += rows_in_file
+            print(f"  -> Appended {rows_in_file} rows (max 10,000) from {file_name}.")
 
-    print("✅ Appended 10,000 rows to Bronze layer")
+        except FileNotFoundError:
+            print(f"❌ ERROR: File not found: {file_name}. Skipping.")
+        except StopIteration:
+            # This handles the case where the file is empty and next() fails
+            print(f"  -> File {file_name} was empty.")
+        except Exception as e:
+            print(f"❌ ERROR processing {file_name}: {e}. Skipping.")
+
+    print(f"\n✅ Total rows appended to Bronze layer: {total_rows_loaded}")
     return True
 
 # --- Bronze DQ Tasks ---
@@ -364,7 +390,8 @@ def bronze_load_flow():
     print("\n===============================")
     print("⚡ Starting Bronze Layer Load...")
     print("===============================")
-    load_csv_to_bronze()
+    # Pass the global file pattern to the task
+    load_csvs_to_bronze(SOURCE_FILES_PATTERN)
 
 @flow(name="Bronze Layer DQ Flow")
 def bronze_dq_flow():
